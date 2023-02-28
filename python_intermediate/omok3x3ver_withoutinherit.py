@@ -1,5 +1,7 @@
 from typing import Any, Callable, List, Optional, Type, Union
 from itertools import permutations
+import numpy as np
+import copy
 
 
 class Omok:
@@ -23,8 +25,10 @@ class Omok:
                     return 'end'
                 if self.check_put_error(point):  # 이상한 곳에 두면 다시 두라고 하기
                     continue
+                if self.check3x3(point):  # 3x3 체크해주기
+                    continue
 
-                self.put_b(point)  # 흑돌 놓기 # 바둑판 범위 벗어난곳 두면 다시 두기
+                self.put_b(point)  # 흑돌 놓기
 
         elif self.count % 2 == 1:
             while self.count % 2 == 1:
@@ -33,6 +37,8 @@ class Omok:
                 if self.check_game_end_byzero(point):
                     return 'end'
                 if self.check_put_error(point):
+                    continue
+                if self.check3x3(point):  # 3x3 체크해주기
                     continue
                 self.put_w(point)
 
@@ -89,12 +95,10 @@ class Omok:
     def check_gameend(self, point):
         x1, y1 = point
         stone_color = self.board[x1][y1]
-        check1 = [self.board[x1][y1 + i] for i in range(-4, 5) if 0 <= y1 + i <= self.board_size - 1]
-        check2 = [self.board[x1 + i][y1] for i in range(-4, 5) if 0 <= x1 + i <= self.board_size - 1]
-        check3 = [self.board[x1 + i][y1 + i] for i in range(-4, 5) if
-                  (0 <= x1 + i <= self.board_size - 1 and 0 <= y1 + i <= self.board_size - 1)]
-        check4 = [self.board[x1 - i][y1 + i] for i in range(-4, 5) if
-                  (0 <= y1 + i <= self.board_size - 1 and 0 <= x1 - i <= self.board_size - 1)]
+        check1 = [self.board[max(0, x1)][min(len(self.board[0])-1, y1 + i)] for i in range(-4, 5)]
+        check2 = [self.board[max(0, x1 + i)][min(self.board[0]-1, y1)] for i in range(-4, 5)]
+        check3 = [self.board[max(0, x1 + i)][min(self.board[0]-1, y1 + i)] for i in range(-4, 5)]
+        check4 = [self.board[max(0, x1 - i)][min(self.board[0]-1, y1 + i)] for i in range(-4, 5)]
         checks = [''.join(i) for i in [check1, check2, check3, check4]]
 
         for check in checks:
@@ -115,6 +119,15 @@ class Omok:
             return True
         else:
             return False
+
+    def check3x3(self, point):
+        x1, y1 = point
+        visited = [point]
+        direction = [(1, 0), (0, 1), (1, 1), (-1, 1)]
+        visited = 
+
+
+
 
 
 if __name__ == '__main__':
